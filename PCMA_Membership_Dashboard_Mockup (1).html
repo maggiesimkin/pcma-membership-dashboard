@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PCMA Membership Dashboard 2.0</title>
+<style>
+/* ── RESET & BASE ── */
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#F7F3EF;font-family:'Segoe UI',Arial,sans-serif;color:#1A1A1A;font-size:13px;}
+button{font-family:inherit;cursor:pointer;}
+
+/* ── BRAND COLORS ── */
+:root{
+  --plum:#6B0F4E;--plum-mid:#8B1F6E;--plum-light:#C96EA0;
+  --teal:#00C4A0;--teal-dim:#009478;--gold:#E8A820;
+  --sand:#F7F3EF;--gray:#EDE8E3;--charcoal:#1A1A1A;
+  --muted:#6B6B80;--white:#fff;
+  --coral:#F07878;--sky:#5BB8D4;--lav:#9B7FD4;
+  --red:#C0283A;--red-bg:#FDEDEF;--red-border:#F0B0B8;
+  --green:#1A7A56;--green-bg:#E8F5F0;--green-border:#A0D8CC;
+  --amber:#B06000;--amber-bg:#FFF4E0;--amber-border:#F0D080;
+}
+
+/* ── LAYOUT ── */
+.mockup-bar{background:var(--gold);color:var(--charcoal);text-align:center;padding:9px 16px;font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.header{background:var(--plum);padding:22px 44px 18px;display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;}
+.header h1{font-size:24px;font-weight:700;color:var(--white);line-height:1.1;}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:1px;margin-top:4px;}
+.header-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;color:rgba(255,255,255,0.4);text-transform:uppercase;margin-bottom:6px;}
+.date-badge{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.22);color:var(--white);padding:8px 16px;border-radius:6px;font-size:11px;font-weight:500;white-space:nowrap;}
+.date-badge span{color:rgba(255,255,255,0.5);font-size:10px;display:block;margin-bottom:2px;}
+.region-buttons{display:flex;gap:7px;align-items:center;flex-wrap:wrap;}
+.rbtn{padding:5px 13px;border-radius:20px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);font-size:11px;font-weight:700;transition:all 0.15s;}
+.rbtn.active{border-color:var(--teal);background:var(--teal);color:var(--charcoal);}
+
+/* REGION STRIP */
+.region-strip{background:var(--white);border-bottom:3px solid var(--plum);padding:10px 44px;display:flex;gap:28px;align-items:center;flex-wrap:wrap;box-shadow:0 2px 8px rgba(107,15,78,0.06);}
+.rs-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.rs-sub{font-size:10px;color:var(--muted);}
+.rs-stat .lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600;}
+.rs-stat .val{font-size:16px;font-weight:700;color:var(--charcoal);}
+.rs-stat .val.warn{color:var(--red);}
+
+/* TABS */
+.tabs{background:var(--white);border-bottom:1px solid var(--gray);padding:0 44px;display:flex;}
+.tab{background:none;border:none;padding:11px 18px;font-size:12px;font-weight:700;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;transition:color 0.15s;display:flex;align-items:center;gap:6px;}
+.tab.active{color:var(--plum);border-bottom-color:var(--plum);}
+.tab-badge{background:var(--plum);color:var(--white);border-radius:10px;font-size:9px;font-weight:700;padding:1px 6px;}
+
+/* MAIN CONTENT */
+.main{padding:28px 44px;max-width:1400px;margin:0 auto;}
+
+/* SECTION TITLE */
+.section-title{font-weight:700;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--plum);margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--plum-light);opacity:0.3;}
+
+/* GRIDS */
+.grid-6{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;}
+.grid-5{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-2r{display:grid;grid-template-columns:1fr 280px;gap:20px;}
+.gap{gap:24px!important;}
+
+/* CARDS */
+.card{background:var(--white);border-radius:10px;padding:20px 22px;box-shadow:0 2px 8px rgba(107,15,78,0.08);}
+.card-title{font-weight:600;font-size:15px;color:var(--plum);margin-bottom:14px;}
+
+/* KPI CARDS */
+.kpi{background:var(--white);border-radius:10px;padding:16px 18px;border-top:3px solid var(--plum);box-shadow:0 2px 8px rgba(107,15,78,0.07);}
+.kpi .lbl{font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.kpi .val{font-size:26px;font-weight:700;color:var(--charcoal);line-height:1;}
+.kpi .sub{font-size:11px;color:var(--muted);margin-top:5px;}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-green{background:var(--green-bg);color:var(--green);}
+.badge-amber{background:var(--amber-bg);color:var(--amber);}
+.badge-red{background:var(--red-bg);color:var(--red);}
+
+/* PROGRESS BAR */
+.pbar-wrap{background:var(--gray);border-radius:10px;overflow:hidden;}
+.pbar-fill{border-radius:10px;transition:width 0.4s;}
+
+/* ALERT BOXES */
+.alert{border-radius:10px;padding:14px 18px;font-size:12px;line-height:1.7;}
+.alert-red{background:var(--red-bg);border:1px solid var(--red-border);border-left:4px solid var(--red);}
+.alert-green{background:var(--green-bg);border:1px solid var(--green-border);border-left:4px solid var(--teal-dim);}
+.alert-amber{background:var(--amber-bg);border:1px solid var(--amber-border);border-left:4px solid var(--gold);}
+.alert-title{font-weight:700;margin-bottom:5px;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl thead th{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);padding:6px 8px 8px;text-align:right;border-bottom:2px solid var(--gray);}
+.tbl thead th:first-child{text-align:left;}
+.tbl td{padding:8px 8px;text-align:right;border-bottom:1px solid var(--gray);}
+.tbl td:first-child{text-align:left;}
+.tbl tr.total td{font-weight:700;border-top:2px solid var(--plum);border-bottom:none;}
+
+/* PIPELINE MONTH GRID */
+.pipe-grid{display:grid;grid-template-columns:52px 60px 72px 68px 96px 78px 100px;gap:8px;padding:7px 0;border-bottom:1px solid var(--gray);}
+.pipe-grid.hdr{padding-bottom:8px;border-bottom:2px solid var(--gray);}
+.pipe-grid.hdr div{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.pipe-grid.total{padding-top:9px;border-top:2px solid var(--plum);border-bottom:none;margin-top:4px;}
+
+/* DONUT */
+.donut-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.donut-label{position:absolute;font-weight:700;color:var(--plum);}
+
+/* RETENTION HERO */
+.ret-hero{background:var(--plum);border-radius:12px;padding:28px 22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;}
+.ret-hero .pct{font-size:68px;font-weight:700;color:var(--white);line-height:1;}
+.ret-hero .sub{font-size:11px;color:rgba(255,255,255,0.65);}
+
+/* TAKEAWAY CARDS */
+.takeaway{background:var(--white);border-radius:10px;padding:18px 22px;border-left:5px solid var(--coral);box-shadow:0 2px 8px rgba(107,15,78,0.07);display:grid;grid-template-columns:38px 1fr;gap:14px;align-items:start;margin-bottom:12px;}
+.takeaway .icon{font-size:22px;line-height:1;padding-top:2px;}
+.takeaway .tit{font-weight:700;font-size:14px;color:var(--charcoal);margin-bottom:7px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.takeaway .body{font-size:13px;color:var(--charcoal);line-height:1.75;}
+.type-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 10px;border-radius:20px;}
+.region-tag{font-size:10px;font-weight:600;color:var(--muted);background:var(--gray);padding:2px 10px;border-radius:20px;}
+
+/* NEXT STEPS */
+.next-steps{background:var(--plum);border-radius:12px;padding:24px 28px;}
+.next-steps h3{font-weight:700;font-size:15px;color:var(--white);margin-bottom:16px;letter-spacing:.5px;}
+.step{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px;}
+.step-badge{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--plum);padding:3px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;margin-top:1px;}
+.step-body{font-size:13px;color:rgba(255,255,255,0.88);line-height:1.65;}
+
+/* FOOTER */
+.footer{background:var(--plum);color:var(--plum-light);text-align:center;padding:14px;font-size:11px;margin-top:20px;}
+.footer strong{color:var(--white);}
+
+/* HIDDEN */
+.hidden{display:none!important;}
+.flex-col{display:flex;flex-direction:column;}
+.gap-sm{gap:12px;}
+.gap-md{gap:20px;}
+.gap-lg{gap:24px;}
+.mt-sm{margin-top:12px;}
+.mt-md{margin-top:20px;}
+.mt-lg{margin-top:24px;}
+</style>
+</head>
+<body>
+
+<div class="mockup-bar">📋 Mockup — For Review &amp; Feedback · Not connected to live data</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <div class="header-eyebrow">PCMA</div>
+    <h1>Membership Dashboard 2.0</h1>
+    <div class="header-sub">Membership Intelligence · FY2026</div>
+  </div>
+  <div style="display:flex;flex-direction:column;align-items:flex-end;gap:12px;">
+    <div class="region-buttons">
+      <span style="font-size:11px;color:rgba(255,255,255,0.5);margin-right:4px;">Region:</span>
+      <button class="rbtn active" onclick="setRegion('Global',this)">Global</button>
+      <button class="rbtn" onclick="setRegion('NA',this)">North America</button>
+      <button class="rbtn" onclick="setRegion('EMEA',this)">EMEA</button>
+      <button class="rbtn" onclick="setRegion('APAC',this)">APAC</button>
+      <button class="rbtn" onclick="setRegion('LATAM',this)">Latin America</button>
+    </div>
+    <div class="date-badge"><span>REPORT DATE</span>February 27, 2026</div>
+  </div>
+</div>
+
+<!-- REGION STRIP -->
+<div class="region-strip" id="regionStrip"></div>
+
+<!-- TABS -->
+<div class="tabs">
+  <button class="tab active" onclick="setTab('overview',this)">Overview</button>
+  <button class="tab" onclick="setTab('pipeline',this)">Revenue Pipeline</button>
+  <button class="tab" onclick="setTab('retention',this)">Retention</button>
+  <button class="tab" onclick="setTab('revenue',this)">Budget vs. Actual</button>
+  <button class="tab" onclick="setTab('takeaways',this)">Key Takeaways <span class="tab-badge">9</span></button>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <div id="tab-overview"></div>
+  <div id="tab-pipeline" class="hidden"></div>
+  <div id="tab-retention" class="hidden"></div>
+  <div id="tab-revenue" class="hidden"></div>
+  <div id="tab-takeaways" class="hidden"></div>
+</div>
+
+<div class="footer"><strong>PCMA Membership Dashboard 2.0</strong> · Sources: Salesforce Active Members Report · FY26 Community Pacing Sheet · FY26 Membership Targets CSV · As of February 27, 2026</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────────────────────
+const REGION_DATA = {
+  Global: { name:"Global", sublabel:"All regions combined", color:"#6B0F4E",
+    active:8158, dtr:6500, renewed:434, renewedJan:161, renewedFeb:273, lost:237, grace:609, newYTD:586, newDues:141272, rolling:35.22, rollingWin:"30–45 days",
+    paidEst:5269, paidRet:78, paidRetNote:"Stacey's manual calc · 4,926 ÷ 6,284", nextGenNew:39, nextGenTotal:378, developing:7, budget:2195387, confirmed:1633000 },
+  NA: { name:"North America", sublabel:"USA · Canada", color:"#6B0F4E",
+    active:6828, dtr:5400, renewed:355, renewedJan:150, renewedFeb:205, lost:209, grace:499, newYTD:503, newDues:130448, rolling:37.09, rollingWin:"30–45 days",
+    paidEst:4560, paidRet:84, paidRetNote:"Estimated — prior year snapshot needed", nextGenNew:35, nextGenTotal:340, developing:1, budget:2000000, confirmed:1598686 },
+  EMEA: { name:"EMEA", sublabel:"Europe · Middle East · Africa", color:"#009478",
+    active:335, dtr:302, renewed:12, renewedJan:4, renewedFeb:8, lost:4, grace:13, newYTD:14, newDues:3798, rolling:38.89, rollingWin:"30–45 days",
+    paidEst:260, paidRet:77, paidRetNote:"Estimated — prior year snapshot needed", nextGenNew:1, nextGenTotal:16, developing:0, budget:95187, confirmed:57000 },
+  APAC: { name:"APAC", sublabel:"Asia Pacific", color:"#5BB8D4",
+    active:460, dtr:412, renewed:57, renewedJan:null, renewedFeb:null, lost:11, grace:46, newYTD:8, newDues:5651, rolling:31.25, rollingWin:"30–45 days",
+    paidEst:350, paidRet:80, paidRetNote:"Estimated — prior year snapshot needed", nextGenNew:2, nextGenTotal:20, developing:6, budget:60000, confirmed:37000 },
+  LATAM: { name:"Latin America", sublabel:"Caribbean · South America · Central America", color:"#C0283A",
+    active:487, dtr:412, renewed:10, renewedJan:6, renewedFeb:4, lost:13, grace:51, newYTD:8, newDues:1030, rolling:15.56, rollingWin:"< 30 days",
+    paidEst:310, paidRet:63, paidRetNote:"⚠ Lowest region — 51 in grace (10.5% of active)", nextGenNew:2, nextGenTotal:20, developing:6, budget:40200, confirmed:37000 },
+};
+
+const DTR = [
+  {m:"Jan",dtr:362,act:371,rev:135207,ng:150,na:179,done:true},
+  {m:"Feb",dtr:358,act:384,rev:133713,ng:150,na:119,done:true},
+  {m:"Mar",dtr:428,rev:159858,ng:150,done:false},
+  {m:"Apr",dtr:437,rev:167153,ng:150,done:false},
+  {m:"May",dtr:326,rev:124695,ng:150,done:false},
+  {m:"Jun",dtr:338,rev:129285,ng:150,done:false},
+  {m:"Jul",dtr:342,rev:130815,ng:150,done:false},
+  {m:"Aug",dtr:504,rev:192780,ng:150,done:false},
+  {m:"Sep",dtr:890,rev:340425,ng:150,done:false},
+  {m:"Oct",dtr:730,rev:279225,ng:150,done:false},
+  {m:"Nov",dtr:933,rev:356873,ng:150,done:false},
+  {m:"Dec",dtr:892,rev:341190,ng:150,done:false},
+];
+
+const BUDGET = [
+  {r:"NA",   b:2000000, c:1598686, col:"#6B0F4E"},
+  {r:"EMEA", b:95187,   c:57000,   col:"#009478"},
+  {r:"APAC", b:60000,   c:37000,   col:"#5BB8D4"},
+  {r:"LATAM",b:40200,   c:37000,   col:"#C0283A"},
+];
+
+const TAKEAWAYS = [
+  {type:"flag",icon:"🚨",label:"LATAM Retention Crisis",region:"Latin America",body:"Latin America has 51 members in grace period (10.5% of active — highest of any region), only 10 renewals YTD, and the lowest SF rolling rate at 15.56%. This needs direct outreach attention now before these lapse entirely."},
+  {type:"data",icon:"⚠️",label:"Two Retention Metrics in Conflict",region:"Global",body:"Salesforce shows a 35.22% global rolling rate. Stacey's paid-only calculation shows 78%. These measure completely different things (30–45 day window vs. full year; all members vs. paid-only). They must never appear side-by-side without clear labels — and the SF metric should not be reported to leadership as the retention rate."},
+  {type:"data",icon:"📋",label:"Prior Year Paid Counts Not in Salesforce",region:"Global",body:"The 78% paid retention rate depends on a prior-year baseline (6,284 paid members) stored in Word documents, not the CRM. To fix: enable History Tracking on Membership Status in SF, or start a monthly snapshot tab in the FY26 tracking spreadsheet — four rows, one per region."},
+  {type:"positive",icon:"✅",label:"New Member Goal — On Track YTD",region:"Global",body:"Jan came in at 179 new paid members (+29 vs. 150 goal). Feb came in at 119 (−31). YTD total is 298 against a goal of 300 — essentially flat. The strong January largely offset a softer February. Watch March to confirm trend."},
+  {type:"flag",icon:"📌",label:"Pipeline Tracker is NA-Only",region:"Global",body:"Stacey's FY26 Membership Targets spreadsheet tracks DTR and new member goals for North America only. EMEA, APAC, and LATAM have no equivalent pipeline projection. A Salesforce report filtered by Contact Region would enable the same math for each region."},
+  {type:"positive",icon:"💰",label:"NA Revenue Pacing Strong",region:"North America",body:"North America has confirmed $1.60M of a $2.0M annual budget by February — 80% of the full-year target in just two months. This is a healthy position relative to budget."},
+  {type:"data",icon:"🔍",label:"Goals with Trans Lines Panel Shows No Data",region:"Global",body:"The 'Goals with Trans Lines Membership' panel in Salesforce is empty across all regions. Budget targets are not currently entered in Salesforce — they live in the Excel file only. Connecting budget figures to SF would enable the revenue vs. budget view natively."},
+  {type:"flag",icon:"⚡",label:"APAC Has Highest DTR Conversion Rate",region:"APAC",body:"APAC converted 57 of 412 DTR members YTD (13.8%) — the best conversion rate of any region. Worth understanding what's driving this as a potential model for other regions, particularly LATAM."},
+  {type:"data",icon:"📊",label:"53 Members Unassigned to Any Region",region:"Global",body:"The active member export shows 8,158 global members, but the four regions sum to only 8,110. The gap likely reflects contacts with no Contact Region set in Salesforce — these won't appear in regional revenue or retention reports."},
+];
+
+// ── HELPERS ──────────────────────────────────────────────────────────────────
+let currentRegion = "Global";
+let currentFilter = "all";
+
+const fmt = n => n>=1000000 ? "$"+(n/1000000).toFixed(2)+"M" : n>=1000 ? "$"+(n/1000).toFixed(0)+"K" : "$"+n.toLocaleString();
+const pct = (a,b) => Math.round(a/b*100);
+const badgeClass = p => p>=75?"badge-green":p>=55?"badge-amber":"badge-red";
+
+function pbar(p, color, h=6) {
+  return `<div class="pbar-wrap" style="height:${h}px"><div class="pbar-fill" style="width:${Math.min(p,100)}%;height:100%;background:${color}"></div></div>`;
+}
+
+function ring(p, color, size=56) {
+  const c = `conic-gradient(${color} ${p}%, #EDE8E3 0)`;
+  const inner = size * 0.72;
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${c};display:flex;align-items:center;justify-content:center;flex-shrink:0">
+    <div style="width:${inner}px;height:${inner}px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:${size*.19}px;font-weight:700;color:${color}">${p}%</div>
+  </div>`;
+}
+
+// ── REGION STRIP ─────────────────────────────────────────────────────────────
+function renderStrip(d) {
+  const convP = pct(d.renewed, d.dtr);
+  const lostP = (d.lost/d.active*100).toFixed(1);
+  const graceP = (d.grace/d.active*100).toFixed(1);
+  document.getElementById("regionStrip").innerHTML = `
+    <div><div class="rs-label" style="color:${d.color}">${d.name}</div><div class="rs-sub">${d.sublabel}</div></div>
+    ${[["Active",d.active.toLocaleString(),false],["Due to Renew",d.dtr.toLocaleString(),false],["Renewed YTD",d.renewed,false],["Lost FY26",d.lost,true],["Grace Period",d.grace,d.grace>100],["New YTD",d.newYTD,false],["DTR Conv.",convP+"%",false],["SF Rolling",d.rolling+"%",true]].map(([l,v,w])=>`
+    <div class="rs-stat"><div class="lbl">${l}</div><div class="val ${w?"warn":""}">${v}</div></div>`).join("")}`;
+  document.getElementById("regionStrip").style.borderBottomColor = d.color;
+}
+
+// ── OVERVIEW ─────────────────────────────────────────────────────────────────
+function renderOverview(d) {
+  const convP = pct(d.renewed, d.dtr);
+  const lostP = (d.lost/d.active*100).toFixed(1);
+  const graceP = (d.grace/d.active*100).toFixed(1);
+
+  const kpis = [
+    {l:"Active Members",v:d.active.toLocaleString(),sub:d.sublabel,color:d.color},
+    {l:"Due to Renew",v:d.dtr.toLocaleString(),sub:"No locked date",color:"#6B6B80"},
+    {l:"Renewed YTD",v:d.renewed,sub:`${convP}% of DTR`,color:"#009478"},
+    {l:"Lost FY26",v:d.lost,sub:`${lostP}% of active`,color:"#C0283A"},
+    {l:"In Grace Period",v:d.grace,sub:`${graceP}% of active`,color:d.grace>100?"#C0283A":"#E8A820"},
+    {l:"New Members YTD",v:d.newYTD,sub:fmt(d.newDues)+" dues",color:"#009478"},
+  ];
+
+  const renewalBars = [];
+  const maxR = Math.max(d.renewedJan||0, d.renewedFeb||0, 1);
+  if(d.renewedJan) renewalBars.push({m:"Jan",v:d.renewedJan});
+  if(d.renewedFeb) renewalBars.push({m:"Feb",v:d.renewedFeb});
+
+  const health = [
+    {l:"DTR Conversion",v:`${convP}%`,p:convP,c:convP>10?"#00C4A0":"#E8A820"},
+    {l:"Grace Period Rate",v:`${graceP}%`,p:parseFloat(graceP)*4,c:parseFloat(graceP)>8?"#C0283A":"#E8A820"},
+    {l:"Lost Rate",v:`${lostP}%`,p:parseFloat(lostP)*8,c:parseFloat(lostP)>3?"#C0283A":"#00C4A0"},
+    {l:"Paid Retention (est.)",v:`${d.paidRet}%`,p:d.paidRet,c:d.paidRet>=75?"#00C4A0":d.paidRet>=65?"#E8A820":"#C0283A"},
+  ];
+
+  document.getElementById("tab-overview").innerHTML = `
+    <div class="flex-col gap-lg">
+      <div class="section-title">Member Health at a Glance</div>
+      <div class="grid-6">
+        ${kpis.map(k=>`<div class="kpi" style="border-top-color:${k.color}">
+          <div class="lbl">${k.l}</div>
+          <div class="val" style="color:${k.color=="#C0283A"?"#C0283A":k.color=="#009478"?"#009478":"#1A1A1A"}">${k.v}</div>
+          <div class="sub">${k.sub}</div>
+        </div>`).join("")}
+      </div>
+      <div class="grid-2r">
+        <div class="card">
+          <div class="card-title">Renewals by Month — FY26 YTD</div>
+          <div style="font-size:11px;color:var(--muted);margin-bottom:16px">Jan: ${d.renewedJan??'—'} · Feb: ${d.renewedFeb??'—'} · YTD: ${d.renewed}</div>
+          ${renewalBars.length ? `
+          <div style="display:flex;align-items:flex-end;gap:20px;height:160px;padding:0 10px">
+            ${renewalBars.map(rb=>`
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:8px">
+              <div style="font-size:13px;font-weight:700;color:var(--plum)">${rb.v}</div>
+              <div style="width:100%;border-radius:6px 6px 0 0;background:var(--plum);height:${Math.round(rb.v/maxR*120)}px"></div>
+              <div style="font-size:12px;color:var(--muted)">${rb.m}</div>
+            </div>`).join("")}
+            <div style="flex:3"></div>
+          </div>` : `<div style="height:160px;display:flex;align-items:center;justify-content:center;color:var(--muted)">No monthly data for this region</div>`}
+        </div>
+        <div class="card">
+          <div class="card-title">Member Health</div>
+          ${health.map(h=>`<div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px">
+              <span style="font-size:12px">${h.l}</span>
+              <span style="font-size:12px;font-weight:700;color:${h.c}">${h.v}</span>
+            </div>
+            ${pbar(h.p, h.c)}
+          </div>`).join("")}
+        </div>
+      </div>
+      <div class="section-title">Next Gen &amp; Developing Markets</div>
+      <div class="grid-3">
+        <div class="kpi" style="border-top-color:#00C4A0"><div class="lbl">Next Gen New Members YTD</div><div class="val" style="color:#009478">${d.nextGenNew}</div></div>
+        <div class="kpi" style="border-top-color:#00C4A0"><div class="lbl">Total Next Gen Members</div><div class="val" style="color:#009478">${d.nextGenTotal}</div></div>
+        <div class="kpi" style="border-top-color:#8B1F6E"><div class="lbl">Developing Market New</div><div class="val" style="color:#8B1F6E">${d.developing}</div></div>
+      </div>
+    </div>`;
+}
+
+// ── PIPELINE ─────────────────────────────────────────────────────────────────
+function renderPipeline() {
+  const actuals = [
+    {l:"Jan '26 New Members",goal:150,actual:179,rev:71600},
+    {l:"Feb '26 New Members",goal:150,actual:119,rev:60000},
+    {l:"YTD Total",goal:300,actual:298,rev:131600},
+  ];
+  const maxRev = Math.max(...DTR.map(r=>r.rev));
+  document.getElementById("tab-pipeline").innerHTML = `
+    <div class="flex-col gap-lg">
+      <div class="section-title">FY26 Revenue Pipeline — Stacey's Tracker (NA)</div>
+      <div class="grid-5">
+        ${[{l:"Total Due to Renew",v:"6,540",s:"FY26 full year",c:"#6B0F4E"},{l:"Renewal Revenue Target",v:"$957K",s:"85% retention · $450 avg",c:"#6B0F4E"},{l:"New Member Goal",v:"1,800",s:"150/month target",c:"#009478"},{l:"New Revenue Target",v:"$330K",s:"Feb–Dec pipeline",c:"#009478"},{l:"Total FY26 Pipeline",v:"$1.29M",s:"DTR + New combined",c:"#E8A820"}].map(k=>`
+        <div class="kpi" style="border-top-color:${k.c}"><div class="lbl">${k.l}</div><div class="val" style="color:${k.c}">${k.v}</div><div class="sub">${k.s}</div></div>`).join("")}
+      </div>
+      <div class="grid-3">
+        ${actuals.map(a=>{const diff=a.actual-a.goal;const c=diff>0?"#009478":diff<0?"#C0283A":"#E8A820";return`
+        <div class="card" style="border-left:4px solid ${c};display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px">${a.l}</div>
+            <div style="font-size:34px;font-weight:700;color:${c};line-height:1">${a.actual}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:4px">goal ${a.goal} · <strong style="color:${c}">${diff>=0?"+":""}${diff}</strong></div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:16px;font-weight:700">${fmt(a.rev)}</div>
+            <span class="badge ${badgeClass(pct(a.actual,a.goal))}">${pct(a.actual,a.goal)}% of goal</span>
+          </div>
+        </div>`;}).join("")}
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly Revenue Pipeline — Renewal + New</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:16px">DTR at 85% × $450 avg · New at $400 avg · Bright = confirmed actuals · Faded = projected</div>
+        <div style="display:flex;gap:16px;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:#6B0F4E"></div>Renewal</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:#00C4A0"></div>New Member Goal</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:4px;height:180px;overflow-x:auto;padding-bottom:4px">
+          ${DTR.map(r=>{
+            const rh = Math.round(r.rev/maxRev*150);
+            const nh = Math.round((r.ng*400)/maxRev*150);
+            const op = r.done?"1":"0.35";
+            return `<div style="flex:1;min-width:36px;display:flex;flex-direction:column;align-items:center;gap:2px">
+              <div style="width:100%;display:flex;gap:2px;align-items:flex-end;height:160px">
+                <div style="flex:1;border-radius:4px 4px 0 0;background:#6B0F4E;height:${rh}px;opacity:${op}"></div>
+                <div style="flex:1;border-radius:4px 4px 0 0;background:#00C4A0;height:${nh}px;opacity:${op}"></div>
+              </div>
+              <div style="font-size:10px;color:var(--muted);font-weight:${r.done?700:400}">${r.m}</div>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly Pipeline Detail</div>
+        <div class="pipe-grid hdr"><div>Month</div><div>DTR</div><div>DTR Act.</div><div>85% Tgt</div><div>Renew Rev.</div><div>New Goal</div><div>New Actual</div></div>
+        ${DTR.map(r=>{const diff=r.na!=null?r.na-r.ng:null;return`
+        <div class="pipe-grid" style="opacity:${r.done?1:0.55}">
+          <div style="font-weight:700;color:${r.done?"#6B0F4E":"#1A1A1A"}">${r.m}</div>
+          <div>${r.dtr}</div>
+          <div style="color:${r.done?"#009478":"#6B6B80"}">${r.act??'—'}</div>
+          <div style="color:#6B6B80">${Math.round(r.dtr*.85)}</div>
+          <div>${fmt(r.rev)}</div>
+          <div style="color:#009478">${r.ng}</div>
+          <div style="font-weight:${diff!=null?700:400};color:${diff==null?"#6B6B80":diff>=0?"#009478":"#C0283A"}">${r.na!=null?r.na+" ("+(diff>=0?"+":"")+diff+")":"—"}</div>
+        </div>`}).join("")}
+        <div class="pipe-grid total">
+          <div style="color:#6B0F4E;font-weight:700">TOTAL</div>
+          <div style="font-weight:700">6,540</div>
+          <div style="font-weight:700;color:#009478">755 YTD</div>
+          <div style="color:#6B6B80">5,559</div>
+          <div style="font-weight:700">$957K</div>
+          <div style="font-weight:700;color:#009478">1,800</div>
+          <div style="font-weight:700;color:#009478">298 YTD</div>
+        </div>
+      </div>
+      <div class="alert alert-amber"><span style="font-weight:700;color:#E8A820">📌 Pipeline tracker is currently NA-only.</span> To add EMEA / APAC / LATAM pipeline: a Salesforce report filtered by Contact Region enables the same 85% retention math per region. Regional DTR revenue today: NA $1.9M · EMEA $82K · APAC $75K · LATAM $52K.</div>
+    </div>`;
+}
+
+// ── RETENTION ────────────────────────────────────────────────────────────────
+function renderRetention(d) {
+  const convP = pct(d.renewed, d.dtr);
+  const isGlobal = currentRegion === "Global";
+
+  const compRows = ["NA","EMEA","APAC","LATAM"].map(k=>{
+    const r = REGION_DATA[k];
+    const bp = badgeClass(r.paidRet);
+    return `<tr>
+      <td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${r.color};margin-right:6px"></span><strong>${r.name}</strong></td>
+      <td>${r.active.toLocaleString()}</td><td style="color:var(--muted)">${r.paidEst}</td>
+      <td>${r.dtr.toLocaleString()}</td>
+      <td style="color:#009478;font-weight:600">${r.renewed}</td>
+      <td style="color:#C0283A;font-weight:600">${r.lost}</td>
+      <td style="color:${r.grace>50?"#C0283A":"#E8A820"};font-weight:600">${r.grace}</td>
+      <td><span class="badge ${bp}">${r.paidRet}%</span></td>
+    </tr>`;
+  }).join("");
+
+  document.getElementById("tab-retention").innerHTML = `
+    <div class="flex-col gap-lg">
+      <div class="section-title">Paid Retention — Stacey's Method (Excl. Students &amp; Emeritus)</div>
+      ${isGlobal ? `
+      <div style="display:grid;grid-template-columns:240px 1fr;gap:20px">
+        <div class="ret-hero">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.6)">Global Paid Retention</div>
+          <div class="pct">78%</div>
+          <div class="sub">Excl. students &amp; emeritus</div>
+          <div style="width:100%;background:rgba(255,255,255,0.2);border-radius:10px;height:8px;margin:4px 0">
+            <div style="width:78%;height:100%;border-radius:10px;background:#00C4A0"></div>
+          </div>
+          <div class="sub">4,926 retained ÷ 6,284 prior year</div>
+        </div>
+        <div class="card">
+          <div class="card-title">Calculation Breakdown</div>
+          ${[
+            {l:"Paid members today (all types)",v:"5,269",n:"Supplier + Organizer + Faculty + Other",c:"#6B0F4E"},
+            {l:"Lapsed this year (paid types)",v:"−343",n:"Paid-through date passed, not yet renewed",c:"#C0283A"},
+            {l:"Retained paid members",v:"4,926",n:"Manual count by Stacey",c:"#009478"},
+            {l:"Paid members one year ago",v:"6,284",n:"⚠ Stored in Word docs — not in Salesforce",c:"#E8A820"},
+            {l:"Paid retention rate",v:"78%",n:"4,926 ÷ 6,284",c:"#6B0F4E",big:true},
+          ].map(row=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#F7F3EF;border-radius:7px;border-left:3px solid ${row.c};margin-bottom:8px">
+            <div><div style="font-size:12px;font-weight:600">${row.l}</div><div style="font-size:11px;color:var(--muted)">${row.n}</div></div>
+            <div style="font-size:${row.big?20:14}px;font-weight:700;color:${row.c};flex-shrink:0;margin-left:12px">${row.v}</div>
+          </div>`).join("")}
+        </div>
+      </div>` : `
+      <div style="display:grid;grid-template-columns:200px 1fr;gap:20px">
+        <div style="background:${d.color};border-radius:12px;padding:24px 18px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.7)">${d.name}</div>
+          ${ring(d.paidRet,"#fff",88)}
+          <div style="font-size:10px;color:rgba(255,255,255,0.75);line-height:1.5;margin-top:4px">${d.paidRetNote}</div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:6px;padding:5px 10px;font-size:10px;color:#fff">SF rolling: ${d.rolling}% (${d.rollingWin})</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;align-content:start">
+          ${[["Active",d.active.toLocaleString(),""],[" Paid (est.)",d.paidEst,""],["Due to Renew",d.dtr.toLocaleString(),""],["DTR Conv.",convP+"%",""],["Renewed YTD",d.renewed,"#009478"],["Jan Renewals",d.renewedJan??'—',""],["Feb Renewals",d.renewedFeb??'—',""],["New YTD",d.newYTD,"#009478"],["Lost FY26",d.lost,"#C0283A"],["Grace Period",d.grace,"#C0283A"],["Next Gen New",d.nextGenNew,""],["Next Gen Total",d.nextGenTotal,""]].map(([l,v,c])=>`
+          <div style="background:#fff;border:1px solid var(--gray);border-radius:8px;padding:10px 12px">
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;font-weight:600">${l}</div>
+            <div style="font-size:18px;font-weight:700;color:${c||"#1A1A1A"}">${v}</div>
+          </div>`).join("")}
+        </div>
+      </div>`}
+      <div class="section-title">Regional Comparison</div>
+      <div class="card">
+        <table class="tbl">
+          <thead><tr><th style="text-align:left">Region</th><th>Active</th><th>Paid est.</th><th>DTR</th><th>Renewed</th><th>Lost</th><th>Grace</th><th>Paid Ret. (est.)</th></tr></thead>
+          <tbody>${compRows}</tbody>
+        </table>
+      </div>
+      <div class="grid-2">
+        <div class="alert alert-red"><div class="alert-title" style="color:#C0283A">⚠ Two Retention Metrics in Conflict</div>SF rolling rates (15–39%) use short windows and include all member types. Stacey's 78% paid-only figure is the real business metric. LATAM's 15.56% and 51 in grace is the most urgent signal.</div>
+        <div class="alert alert-green"><div class="alert-title" style="color:#009478">📋 To automate regional paid retention</div>Best path: enable SF History Tracking on Membership Status, filtered by region. Short-term: add 4 rows to the FY26 tracking spreadsheet with Feb 2025 paid member counts — one per region.</div>
+      </div>
+    </div>`;
+}
+
+// ── REVENUE ──────────────────────────────────────────────────────────────────
+function renderRevenue() {
+  const maxB = Math.max(...BUDGET.map(r=>r.b));
+  document.getElementById("tab-revenue").innerHTML = `
+    <div class="flex-col gap-lg">
+      <div class="section-title">Member Dues Revenue — YTD vs. FY26 Budget</div>
+      <div class="grid-4">
+        ${BUDGET.map(b=>{const p=pct(b.c,b.b);return`
+        <div class="kpi" style="border-top-color:${b.col}">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+            <div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:${b.col}">${b.r}</div>
+              <div style="font-size:20px;font-weight:700">${fmt(b.c)}</div>
+              <div style="font-size:11px;color:var(--muted)">of ${fmt(b.b)} budget</div>
+            </div>
+            ${ring(p,b.col,54)}
+          </div>
+          ${pbar(p,b.col,7)}
+          <div style="font-size:11px;color:var(--muted);margin-top:6px">${p>=100?"✓ Budget exceeded":fmt(b.b-b.c)+" remaining"}</div>
+          <span class="badge ${badgeClass(p)}">${p}% to budget</span>
+        </div>`;}).join("")}
+      </div>
+      <div class="card">
+        <div class="card-title">Confirmed YTD vs. FY26 Budget by Region</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:18px">GL codes: 100 (NA) · 260 (EMEA) · 269 (APAC) · 258 (LATAM) · Source: FY26 Community Pacing sheet</div>
+        <div style="display:flex;gap:16px;margin-bottom:12px">
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:#EDE8E3"></div>FY26 Budget</div>
+          <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)"><div style="width:10px;height:10px;border-radius:3px;background:#6B0F4E"></div>YTD Confirmed</div>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:24px;height:200px;padding:0 20px">
+          ${BUDGET.map(b=>{
+            const bh=Math.round(b.b/maxB*160);
+            const ch=Math.round(b.c/maxB*160);
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px">
+              <div style="width:100%;display:flex;gap:4px;align-items:flex-end;height:170px">
+                <div style="flex:1;border-radius:4px 4px 0 0;background:#EDE8E3;height:${bh}px;position:relative">
+                  <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted);white-space:nowrap">${fmt(b.b)}</div>
+                </div>
+                <div style="flex:1;border-radius:4px 4px 0 0;background:${b.col};height:${ch}px;position:relative">
+                  <div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:${b.col};white-space:nowrap;font-weight:700">${fmt(b.c)}</div>
+                </div>
+              </div>
+              <div style="font-size:12px;font-weight:700;color:${b.col}">${b.r}</div>
+            </div>`;
+          }).join("")}
+        </div>
+      </div>
+      <div class="grid-3">
+        ${[{l:"Global Member Dues YTD",v:"$1.633M",s:"74% of $2.195M annual budget",c:"#6B0F4E"},{l:"266 + 120 Sponsorship Pipeline",v:"Pending SF report",s:"Dept 266 Engagement + 120 Chapter Admin",c:"#6B6B80"},{l:"Total FY26 Dues Budget",v:"$2.195M",s:"NA + EMEA + APAC + LATAM combined",c:"#1A1A1A"}].map(k=>`
+        <div class="kpi" style="border-top-color:${k.c}"><div class="lbl">${k.l}</div><div style="font-size:18px;font-weight:700;color:${k.c};line-height:1">${k.v}</div><div class="sub" style="margin-top:4px">${k.s}</div></div>`).join("")}
+      </div>
+      <div class="alert alert-amber"><strong style="color:#E8A820">📌 To complete this panel:</strong> Connect a Salesforce report on GL codes 100/260/269/258 for live actuals by month. Add GL 266 (Engagement Programs) and 120 (Chapter Admin) as a separate sponsorship tile once the SF report is scoped.</div>
+    </div>`;
+}
+
+// ── TAKEAWAYS ────────────────────────────────────────────────────────────────
+function renderTakeaways() {
+  const typeColors = {flag:"#F07878",data:"#E8A820",positive:"#00C4A0"};
+  const typeLabels = {flag:"Flag",data:"Data Issue",positive:"Positive Signal"};
+  const filtered = currentFilter==="all" ? TAKEAWAYS : TAKEAWAYS.filter(t=>t.type===currentFilter);
+
+  document.getElementById("tab-takeaways").innerHTML = `
+    <div class="flex-col gap-lg">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="section-title">Key Takeaways, Flags &amp; Discrepancies</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:-10px;margin-bottom:14px">For Stacey · As of Feb 27, 2026 · ${TAKEAWAYS.length} items across data integrity, performance, and opportunities</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          ${[["all","All",TAKEAWAYS.length],["flag","🚨 Flags",TAKEAWAYS.filter(t=>t.type==="flag").length],["data","⚠️ Data Issues",TAKEAWAYS.filter(t=>t.type==="data").length],["positive","✅ Positives",TAKEAWAYS.filter(t=>t.type==="positive").length]].map(([id,label,count])=>`
+          <button onclick="setFilter('${id}')" style="padding:6px 14px;border-radius:20px;border:1px solid;border-color:${currentFilter===id?"#6B0F4E":"#EDE8E3"};background:${currentFilter===id?"#6B0F4E":"#fff"};color:${currentFilter===id?"#fff":"#6B6B80"};font-size:11px;font-weight:700">${label} (${count})</button>`).join("")}
+        </div>
+      </div>
+      <div class="grid-4">
+        ${[[TAKEAWAYS.filter(t=>t.type==="flag").length,"Items Flagged","#C0283A","#FDEDEF"],[TAKEAWAYS.filter(t=>t.type==="data").length,"Data Integrity Issues","#E8A820","#FFF4E0"],[TAKEAWAYS.filter(t=>t.type==="positive").length,"Positive Signals","#009478","#E8F5F0"],[2,"Require Immediate Action","#6B0F4E","#F7EEF5"]].map(([v,l,c,bg])=>`
+        <div style="background:${bg};border-radius:10px;padding:16px 20px;border:1px solid ${c}30">
+          <div style="font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:${c};margin-bottom:5px">${l}</div>
+          <div style="font-size:32px;font-weight:700;color:${c};line-height:1">${v}</div>
+        </div>`).join("")}
+      </div>
+      <div>
+        ${filtered.map(item=>`
+        <div class="takeaway" style="border-left-color:${typeColors[item.type]}">
+          <div class="icon">${item.icon}</div>
+          <div>
+            <div class="tit">
+              ${item.label}
+              <span class="type-tag" style="color:${typeColors[item.type]};background:${typeColors[item.type]}18">${typeLabels[item.type]}</span>
+              <span class="region-tag">${item.region}</span>
+            </div>
+            <div class="body">${item.body}</div>
+          </div>
+        </div>`).join("")}
+      </div>
+      <div class="next-steps">
+        <h3>Recommended Next Steps — Prioritized</h3>
+        ${[
+          {p:"Immediate",    i:"LATAM outreach — contact the 51 members in grace period before they lapse. Each lost member is ~$160 in average dues.",c:"#F07878"},
+          {p:"This week",    i:"Align on which retention metric gets reported to leadership — the SF rolling rate and Stacey's 78% paid-only figure cannot both circulate without causing confusion.",c:"#E8A820"},
+          {p:"This month",   i:"Enter Feb 2025 regional paid member counts into the tracking spreadsheet (four numbers) to enable true regional retention comparison.",c:"#00C4A0"},
+          {p:"This month",   i:"Scope a Salesforce report on GL codes 100/260/269/258 for live actuals — this unlocks the Revenue vs. Budget panel in real time.",c:"#00C4A0"},
+          {p:"This quarter", i:"Add DTR + new member goal tracking for EMEA, APAC, and LATAM to the pipeline spreadsheet — currently NA-only.",c:"#7DD8F0"},
+          {p:"This quarter", i:"Investigate APAC's 13.8% DTR conversion rate (highest of any region) — determine if outreach or timing factors can be replicated elsewhere.",c:"#B8A4E8"},
+        ].map(s=>`<div class="step"><span class="step-badge" style="background:${s.c}">${s.p}</span><div class="step-body">${s.i}</div></div>`).join("")}
+      </div>
+    </div>`;
+}
+
+// ── CONTROLLERS ───────────────────────────────────────────────────────────────
+function setRegion(key, btn) {
+  currentRegion = key;
+  document.querySelectorAll(".rbtn").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  const d = REGION_DATA[key];
+  renderStrip(d);
+  renderOverview(d);
+  renderRetention(d);
+}
+
+function setTab(id, btn) {
+  document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  ["overview","pipeline","retention","revenue","takeaways"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("hidden", t!==id);
+  });
+}
+
+function setFilter(id) {
+  currentFilter = id;
+  renderTakeaways();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+(function init() {
+  const d = REGION_DATA.Global;
+  renderStrip(d);
+  renderOverview(d);
+  renderPipeline();
+  renderRetention(d);
+  renderRevenue();
+  renderTakeaways();
+})();
+</script>
+</body>
+</html>
